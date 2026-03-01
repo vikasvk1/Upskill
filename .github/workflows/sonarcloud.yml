@@ -18,6 +18,19 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Validate SonarCloud settings
+        run: |
+          if [ -z "${{ vars.SONAR_ORGANIZATION }}" ] || [ -z "${{ vars.SONAR_PROJECT_KEY }}" ]; then
+            echo "Missing SONAR_ORGANIZATION or SONAR_PROJECT_KEY repo variables."
+            echo "Set them in GitHub: Settings > Secrets and variables > Actions > Variables."
+            exit 1
+          fi
+          if [ -z "${{ secrets.SONAR_TOKEN }}" ]; then
+            echo "Missing SONAR_TOKEN secret."
+            echo "Set it in GitHub: Settings > Secrets and variables > Actions > Secrets."
+            exit 1
+          fi
+
       - name: SonarQube Cloud Scan
         uses: SonarSource/sonarqube-scan-action@v7
         env:
@@ -27,5 +40,5 @@ jobs:
           args: >
             -Dsonar.organization=${{ vars.SONAR_ORGANIZATION }}
             -Dsonar.projectKey=${{ vars.SONAR_PROJECT_KEY }}
-            -Dsonar.sources=DSA,LLD,HLD
-            -Dsonar.exclusions=**/out/**,**/.idea/**
+            -Dsonar.sources=.
+            -Dsonar.exclusions=**/out/**,**/.idea/**,**/.git/**,**/skills/**

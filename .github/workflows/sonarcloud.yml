@@ -22,14 +22,17 @@ jobs:
         run: |
           set -e
           mkdir -p .sonar_classes
-          find . -name "*.java" \
-            -not -path "./out/*" \
-            -not -path "./.idea/*" \
-            -not -path "./.git/*" \
-            -not -path "./skills/*" > .sonar_java_files.txt
+          mapfile -d '' java_files < <(
+            find . -name "*.java" \
+              -not -path "./out/*" \
+              -not -path "./.idea/*" \
+              -not -path "./.git/*" \
+              -not -path "./skills/*" \
+              -print0
+          )
 
-          if [ -s .sonar_java_files.txt ]; then
-            javac -d .sonar_classes @.sonar_java_files.txt
+          if [ "${#java_files[@]}" -gt 0 ]; then
+            javac -d .sonar_classes "${java_files[@]}"
           else
             echo "No Java files found to compile."
           fi

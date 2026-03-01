@@ -14,10 +14,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
 
       - name: Checkstyle (reviewdog)
-        uses: dbelyaev/action-checkstyle@v3
+        uses: dbelyaev/action-checkstyle@0babcc5b0e55e5a8ab6f8a17134f2d613e2bcdda
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           reporter: github-pr-review

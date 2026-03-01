@@ -1,0 +1,56 @@
+name: SonarCloud
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  sonarcloud:
+    name: SonarCloud Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+        with:
+          fetch-depth: 0
+
+      - name: Compile Java (for Sonar)
+        run: |
+          set -e
+          mkdir -p .sonar_classes
+          find . -name "*.java" \
+            -not -path "./out/*" \
+            -not -path "./.idea/*" \
+            -not -path "./.git/*" \
+            -not -path "./skills/*" > .sonar_java_files.txt
+
+          if [ -s .sonar_java_files.txt ]; then
+            javac -d .sonar_classes @.sonar_java_files.txt
+          else
+            echo "No Java files found to compile."
+          fi
+
+      - name: Validate SonarCloud settings
+        run: |
+          if [ -z "${{ vars.SONAR_ORGANIZATION }}" ] || [ -z "${{ vars.SONAR_PROJECT_KEY }}" ]; then
+            echo "Missing SONAR_ORGANIZATION or SONAR_PROJECT_KEY repo variables."
+            echo "Set them in GitHub: Settings > Secrets and variables > Actions > Variables."
+            exit 1
+          fi
+
+      - name: SonarQube Cloud Scan
+        uses: SonarSource/sonarqube-scan-action@a31c9398be7ace6bbfaf30c0bd5d415f843d45e9
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.organization=${{ vars.SONAR_ORGANIZATION }}
+            -Dsonar.projectKey=${{ vars.SONAR_PROJECT_KEY }}
+            -Dsonar.sources=.
+            -Dsonar.exclusions=**/out/**,**/.idea/**,**/.git/**,**/skills/**
+            -Dsonar.java.binaries=.sonar_classes

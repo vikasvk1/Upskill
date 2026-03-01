@@ -18,6 +18,22 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Compile Java (for Sonar)
+        run: |
+          set -e
+          mkdir -p .sonar_classes
+          find . -name "*.java" \
+            -not -path "./out/*" \
+            -not -path "./.idea/*" \
+            -not -path "./.git/*" \
+            -not -path "./skills/*" > .sonar_java_files.txt
+
+          if [ -s .sonar_java_files.txt ]; then
+            javac -d .sonar_classes @.sonar_java_files.txt
+          else
+            echo "No Java files found to compile."
+          fi
+
       - name: Validate SonarCloud settings
         run: |
           if [ -z "${{ vars.SONAR_ORGANIZATION }}" ] || [ -z "${{ vars.SONAR_PROJECT_KEY }}" ]; then
@@ -42,3 +58,4 @@ jobs:
             -Dsonar.projectKey=${{ vars.SONAR_PROJECT_KEY }}
             -Dsonar.sources=.
             -Dsonar.exclusions=**/out/**,**/.idea/**,**/.git/**,**/skills/**
+            -Dsonar.java.binaries=.sonar_classes

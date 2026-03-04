@@ -7,6 +7,16 @@ public class ChessBoard {
         initializeStandardSetup();
     }
 
+    public ChessBoard(ChessBoard other) {
+        this.grid = new Piece[SIZE][SIZE];
+        for (int row = 0; row < SIZE; row++) {
+            for (int col = 0; col < SIZE; col++) {
+                Piece piece = other.grid[row][col];
+                this.grid[row][col] = piece == null ? null : piece.copy();
+            }
+        }
+    }
+
     public void initializeStandardSetup() {
         for (int row = 0; row < SIZE; row++) {
             for (int col = 0; col < SIZE; col++) {
@@ -54,6 +64,9 @@ public class ChessBoard {
         Piece captured = getPiece(to);
         setPiece(to, moving);
         setPiece(from, null);
+        if (moving != null) {
+            moving.setHasMoved(true);
+        }
         return captured;
     }
 

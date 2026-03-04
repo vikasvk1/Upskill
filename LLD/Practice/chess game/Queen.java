@@ -17,4 +17,11 @@ public class Queen extends Piece {
     public char getSymbol() {
         return getColor() == Color.WHITE ? 'Q' : 'q';
     }
+
+    @Override
+    public Piece copy() {
+        Queen copy = new Queen(getColor());
+        copy.setHasMoved(hasMoved());
+        return copy;
+    }
 }

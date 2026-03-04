@@ -17,4 +17,11 @@ public class Rook extends Piece {
     public char getSymbol() {
         return getColor() == Color.WHITE ? 'R' : 'r';
     }
+
+    @Override
+    public Piece copy() {
+        Rook copy = new Rook(getColor());
+        copy.setHasMoved(hasMoved());
+        return copy;
+    }
 }

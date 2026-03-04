@@ -14,4 +14,11 @@ public class Bishop extends Piece {
     public char getSymbol() {
         return getColor() == Color.WHITE ? 'B' : 'b';
     }
+
+    @Override
+    public Piece copy() {
+        Bishop copy = new Bishop(getColor());
+        copy.setHasMoved(hasMoved());
+        return copy;
+    }
 }

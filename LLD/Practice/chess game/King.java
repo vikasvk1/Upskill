@@ -14,4 +14,11 @@ public class King extends Piece {
     public char getSymbol() {
         return getColor() == Color.WHITE ? 'K' : 'k';
     }
+
+    @Override
+    public Piece copy() {
+        King copy = new King(getColor());
+        copy.setHasMoved(hasMoved());
+        return copy;
+    }
 }

@@ -37,4 +37,11 @@ public class Pawn extends Piece {
     public char getSymbol() {
         return getColor() == Color.WHITE ? 'P' : 'p';
     }
+
+    @Override
+    public Piece copy() {
+        Pawn copy = new Pawn(getColor());
+        copy.setHasMoved(hasMoved());
+        return copy;
+    }
 }

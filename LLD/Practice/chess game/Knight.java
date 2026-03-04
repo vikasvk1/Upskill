@@ -14,4 +14,11 @@ public class Knight extends Piece {
     public char getSymbol() {
         return getColor() == Color.WHITE ? 'N' : 'n';
     }
+
+    @Override
+    public Piece copy() {
+        Knight copy = new Knight(getColor());
+        copy.setHasMoved(hasMoved());
+        return copy;
+    }
 }
